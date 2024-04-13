@@ -1,34 +1,19 @@
-import openai
 import json
+import os
 import requests
-import pytz
 from datetime import datetime, timedelta, timezone
+from time import sleep
+
+import pytz
 
 from retriever import InternationalOrganizationRetriever
+from openai_wrapper import summarize_abstract
 
 # Indochina Timezone
-ICT = timezone(timedelta(hours=+7))
-
-# APIキーの設定
-# openai.api_key = os.environ["OPENAI_API_KEY"]
+ICT = pytz.timezone('Asia/Bangkok')
 
 # Slack Webhook URL
 WEBHOOK_URL = "{通知先のWebhook URL}"
-
-SYSTEM_PARAMETER = """```
-与えられたフィードの情報を、以下の制約条件をもとに要約を出力してください。
-
-制約条件:
-・文章は簡潔にわかりやすく。
-・箇条書きで3行で出力。
-・要約した文章は日本語へ翻訳。
-・最終的な結論を含めること。
-
-期待する出力フォーマット:
-1.
-2.
-3.
-```"""
 
 
 def post_to_slack(message: str, link_url: str, title: str) -> None:
@@ -60,10 +45,9 @@ def post_to_slack(message: str, link_url: str, title: str) -> None:
 
 if __name__ == "__main__":
     model = 'gpt-3.5-turbo'
-    # openai_api_key = os.environ['OPENAI_API_KEY']
-    # discord_url = os.environ['DISCORD_URL']
+    openai_api_key = os.environ['OPENAI_API_KEY']
 
-    now = datetime.now(tz=pytz.timezone('Asia/Bangkok'))
+    now = datetime.now(tz=ICT)
     retriever = InternationalOrganizationRetriever()
     recent_entries = retriever.fetch_recent_entries(now, hours_ago=24*62)
 
@@ -73,6 +57,7 @@ if __name__ == "__main__":
 
         if abstract == '':
             continue
-    #     summary = summarize_abstract(abstract, openai_api_key, model)
+        # summary = summarize_abstract(abstract, openai_api_key, model)
+        summary = abstract[:10]
     #     sender.send_summary(entry, summary)
-    #     sleep(5)
+        sleep(5)
