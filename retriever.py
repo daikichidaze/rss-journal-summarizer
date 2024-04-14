@@ -10,10 +10,6 @@ from bs4 import BeautifulSoup
 from run_date_mgt import get_current_datetime, ICT
 
 
-# Indochina Timezone
-ICT = pytz.timezone('Asia/Bangkok')
-
-
 class InternationalOrganizationRetriever:
     name = 'International Organization'
     rss_url = 'https://www.cambridge.org/core/rss/product/id/146C8B1E6606CE283EBC5B10B255F4C0'

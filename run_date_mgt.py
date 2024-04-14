@@ -17,7 +17,7 @@ def read_last_run_date(file_path):
         with open(file_path, 'r') as file:
             data = json.load(file)
             last_run_date = datetime.strptime(
-                data['last_run_date'], '%Y-%m-%d')
+                data['last_run_date'], '%Y-%m-%d').replace(tzinfo=ICT)
     else:
         last_run_date = datetime(1900, 1, 1).replace(tzinfo=ICT)
     return last_run_date
