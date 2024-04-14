@@ -21,15 +21,14 @@ def read_last_run_date(file_path):
     # Default minimum date with timezone
     default_date = datetime(1900, 1, 1).replace(tzinfo=ICT)
     if os.path.exists(file_path):
-        with open(file_path, 'r') as file:
-            data = json.load(file)
-            # Check if 'last_run_date' key is in the data
-            if 'last_run_date' in data:
+        try:
+            with open(file_path, 'r') as file:
+                data = json.load(file)
                 last_run_date = datetime.strptime(
                     data['last_run_date'], '%Y-%m-%d').replace(tzinfo=ICT)
-            else:
-                # Return the default date if the key is not found
-                last_run_date = default_date
+        except:
+            # Return the default date if the key is not found
+            last_run_date = default_date
     else:
         # Return the default date if the file does not exist
         last_run_date = default_date
