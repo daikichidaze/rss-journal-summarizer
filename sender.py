@@ -11,40 +11,40 @@ class SlackSender:
         authors = '; '.join([author.name for author in entry.authors])
 
         data = {
-            "blocks": [
+            'blocks': [
                 {
-                    "type": "section",
-                    "text": {
-                        "type": "mrkdwn",
-                        "text": f"<{entry.link}|{entry.title}>",
+                    'type': 'section',
+                    'text': {
+                        'type': 'mrkdwn',
+                        'text': f'<{entry.link}|{entry.title}>',
                     },
                 },
                 {
-                    "type": "section",
-                    "text": {
-                        "type": "mrkdwn",
-                        "text": f'Journal: `{journal_title}`\n'
+                    'type': 'section',
+                    'text': {
+                        'type': 'mrkdwn',
+                        'text': f'Journal: `{journal_title}`\n'
                                 f'Authors: `{authors}`\n'
                                 f'Date: `{entry.updated}`\n'
                     },
                 },
-                {"type": "divider"},
+                {'type': 'divider'},
                 {
-                    "type": "rich_text",
-                    "elements": [
+                    'type': 'rich_text',
+                    'elements': [
                         {
-                            "type": "rich_text_preformatted",
-                            "elements": [
+                            'type': 'rich_text_preformatted',
+                            'elements': [
                                 {
-                                    "type": "text",
-                                    "text": summary
+                                    'type': 'text',
+                                    'text': summary
                                 }
                             ]
                         }
                     ]
                 },
             ],
-            "unfurl_links": False,
+            'unfurl_links': False,
         }
 
         headers = {'Content-Type': 'application/json'}
