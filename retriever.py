@@ -18,11 +18,11 @@ class InternationalOrganizationRetriever:
     name = 'International Organization'
     rss_url = 'https://www.cambridge.org/core/rss/product/id/146C8B1E6606CE283EBC5B10B255F4C0'
 
-    def fetch_recent_entries(self, now=None, hours_ago=24):
+    def fetch_recent_entries(self, current_datetime=None, start_datetime=None):
         feed = feedparser.parse(self.rss_url)
         entries = feed.entries
         recent_entries = retrieve_recent_entries(
-            entries, now=now, hours_ago=hours_ago)
+            entries, current_datetime=current_datetime, start_datetime=start_datetime)
         return recent_entries
 
     def extract_abstract(self, entry) -> str:
@@ -58,22 +58,25 @@ class InternationalOrganizationRetriever:
         }
 
 
-def check_entry_recent(entry, now=None, hours_ago=24):
-    if now is None:
-        now = get_current_datetime()
+def check_entry_recent(entry, current_datetime=None, start_datetime=None):
+    if current_datetime is None:
+        current_datetime = get_current_datetime()
+    if start_datetime is None:
+        start_datetime = current_datetime - timedelta(days=1)
 
     entry_time = datetime.fromtimestamp(
         mktime(entry.updated_parsed), tz=ICT)
-    start_time = now - timedelta(hours=hours_ago)
 
-    if (start_time <= entry_time < now):
+    if (start_datetime <= entry_time < current_datetime):
         return True
 
     return False
 
 
-def retrieve_recent_entries(entries, now=None, hours_ago=24) -> List:
-    if now is None:
-        now = get_current_datetime()
+def retrieve_recent_entries(entries, current_datetime=None, start_datetime=None) -> List:
+    if current_datetime is None:
+        current_datetime = get_current_datetime()
+    if start_datetime is None:
+        start_datetime = current_datetime - timedelta(days=1)
 
-    return [entry for entry in entries if check_entry_recent(entry, now, hours_ago)]
+    return [entry for entry in entries if check_entry_recent(entry, current_datetime, start_datetime)]

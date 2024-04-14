@@ -53,4 +53,4 @@ class SlackSender:
 
         res.raise_for_status()
 
-        print(res.status_code)
+        return res.status_code
