@@ -18,10 +18,13 @@ class Retriever(ABC):
         entries = feed.entries
         return retrieve_recent_entries(entries, current_datetime=current_datetime, start_datetime=start_datetime)
 
-    @abstractmethod
     def extract_abstract(self, entry) -> str:
         """Common page retrieval and parsing process"""
-        response = requests.get(entry.link)
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
+        }
+        response = requests.get(entry.link, headers=headers)
+        response.raise_for_status()
         soup = BeautifulSoup(response.text, 'html.parser')
         return self.parse_abstract(soup)
 
@@ -47,7 +50,33 @@ class InternationalOrganizationRetriever(Retriever):
         abstract_text = abstract_contents.contents[0]
         return abstract_text
 
-    def get_property(self, entry) -> dict:
+    def get_entry_property(self, entry) -> dict:
+        date = entry['updated']
+        url = entry['link']
+        title = entry['title']
+        authors = ';'.join([item.name for item in entry['authors']])
+        return {
+            'date': date,
+            'url': url,
+            'title': title,
+            'authors': authors
+        }
+
+
+class WorldPoliticsRetriever(Retriever):
+    name = 'World Politics'
+    rss_url = 'https://muse.jhu.edu/feeds/latest_articles?jid=208'
+
+    def parse_abstract(self, soup) -> str:
+        abstract_class = soup.find(class_='abstract')
+        if abstract_class is None:  # In case not a article page
+            return ''
+        abstract_contents = abstract_class.find_all('p', recursive=False)[0]
+        abstract_paragraph = abstract_contents.contents[1]  # second <p>
+        abstract_text = abstract_paragraph.contents[0]  # first contents
+        return abstract_text
+
+    def get_entry_property(self, entry) -> dict:
         journal = entry['prism_publicationtitle']
         date = entry['prism_publicationdate']
         url = entry['link']

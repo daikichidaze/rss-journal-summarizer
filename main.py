@@ -5,7 +5,7 @@ from time import sleep
 import pytz
 
 from run_date_mgt import get_current_datetime, read_last_run_date, update_last_run_date
-from retriever import InternationalOrganizationRetriever
+from retriever import InternationalOrganizationRetriever, WorldPoliticsRetriever
 from openai_wrapper import summarize_abstract
 from sender import SlackSender
 
@@ -19,7 +19,7 @@ if __name__ == "__main__":
     now = get_current_datetime()
     last_run_date = read_last_run_date(run_date_file)
 
-    retriever = InternationalOrganizationRetriever()
+    retriever = WorldPoliticsRetriever()
     recent_entries = retriever.fetch_recent_entries(now, last_run_date)
 
     sender = SlackSender(slack_webhook_url)
@@ -39,8 +39,8 @@ if __name__ == "__main__":
 ## 解説
 この研究は、国際批判に直面するとき、国家が他国の同様の欠点を指摘するwhataboutismがアメリカの公衆意見をどのように形成するかを調査している。whataboutismは批判の影響を軽減し、公衆の立場を変える効果があり、類似の最近の過ちを引用するwhataboutismが意見を形成する力を持つことが分かった。しかし、whataboutist国家のアイデンティティは効果に大きな影響を与えない。これらの結果から、whataboutismは国際関係における強力な修辞戦術であり、国際関係の研究者により多くの注意を必要とすることが示されている。"""
 
-        # status = sender.send_summary(entry, summary, retriever.name)
-        status = 200
+        status = sender.send_summary(entry, summary, retriever.name)
+        # status = 200
         if status == 200:
             had_updates = True
         sleep(5)
