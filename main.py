@@ -1,17 +1,13 @@
-import json
 import os
 from datetime import datetime
 from time import sleep
 
 import pytz
 
+from run_date_mgt import get_current_datetime, get_new_data_since, update_last_run_date
 from retriever import InternationalOrganizationRetriever
 from openai_wrapper import summarize_abstract
 from sender import SlackSender
-
-
-# Indochina Timezone
-ICT = pytz.timezone('Asia/Bangkok')
 
 
 if __name__ == "__main__":
@@ -19,7 +15,7 @@ if __name__ == "__main__":
     openai_api_key = os.environ['OPENAI_API_KEY']
     slack_webhook_url = os.environ['SLACK_URL']
 
-    now = datetime.now(tz=ICT)
+    now = get_current_datetime()
     retriever = InternationalOrganizationRetriever()
     recent_entries = retriever.fetch_recent_entries(now, hours_ago=24*62)
 

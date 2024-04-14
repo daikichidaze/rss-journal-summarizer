@@ -7,6 +7,8 @@ import pytz
 from typing import List
 from bs4 import BeautifulSoup
 
+from run_date_mgt import get_current_datetime, ICT
+
 
 # Indochina Timezone
 ICT = pytz.timezone('Asia/Bangkok')
@@ -58,7 +60,7 @@ class InternationalOrganizationRetriever:
 
 def check_entry_recent(entry, now=None, hours_ago=24):
     if now is None:
-        now = datetime.now(tz=ICT)
+        now = get_current_datetime()
 
     entry_time = datetime.fromtimestamp(
         mktime(entry.updated_parsed), tz=ICT)
@@ -72,6 +74,6 @@ def check_entry_recent(entry, now=None, hours_ago=24):
 
 def retrieve_recent_entries(entries, now=None, hours_ago=24) -> List:
     if now is None:
-        now = datetime.now(tz=ICT)
+        now = get_current_datetime()
 
     return [entry for entry in entries if check_entry_recent(entry, now, hours_ago)]
