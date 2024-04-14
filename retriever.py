@@ -21,9 +21,11 @@ class Retriever(ABC):
     def extract_abstract(self, entry) -> str:
         """Common page retrieval and parsing process"""
         headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36'
         }
-        response = requests.get(entry.link, headers=headers)
+        response = requests.get(
+            'https://academic.oup.com/ia/advance-article/doi/10.1093/ia/iiae069/7641065', headers=headers)
+        # response = requests.get(entry.link, headers=headers)
         response.raise_for_status()
         soup = BeautifulSoup(response.text, 'html.parser')
         return self.parse_abstract(soup)
@@ -36,6 +38,58 @@ class Retriever(ABC):
     @abstractmethod
     def get_entry_property(self, entry) -> dict:
         pass
+
+
+class InternationalAffairsLatestIssueRetriever(Retriever):
+    name = 'International Affairs'
+    rss_url = 'https://academic.oup.com/rss/site_5569/3425.xml'
+
+    def parse_abstract(self, soup) -> str:
+        abstract_class = soup.find(class_='abstract')
+        if abstract_class is None:  # In case not a article page
+            return ''
+        abstract_contents = abstract_class.find_all('p', recursive=False)[0]
+        abstract_text = abstract_contents.contents[0]  # first contents
+        return abstract_text
+
+    def get_entry_property(self, entry) -> dict:
+        date = entry['updated']
+        url = entry['link']
+        title = entry['title']
+        authors = ''
+        return {
+            'journal_name': self.name,
+            'date': date,
+            'url': url,
+            'title': title,
+            'authors': authors
+        }
+
+
+class InternationalAffairsAdvanceArticlesRetriever(Retriever):
+    name = 'International Affairs'
+    rss_url = 'https://academic.oup.com/rss/site_5569/advanceAccess_3425.xml'
+
+    def parse_abstract(self, soup) -> str:
+        abstract_class = soup.find(class_='chapter-para')
+        if abstract_class is None:  # In case not a article page
+            return ''
+        abstract_contents = abstract_class.find_all('p', recursive=False)[0]
+        abstract_text = abstract_contents.contents[0]  # first contents
+        return abstract_text
+
+    def get_entry_property(self, entry) -> dict:
+        date = entry['updated']
+        url = entry['link']
+        title = entry['title']
+        authors = ''
+        return {
+            'journal_name': self.name,
+            'date': date,
+            'url': url,
+            'title': title,
+            'authors': authors
+        }
 
 
 class InternationalOrganizationRetriever(Retriever):
@@ -106,3 +160,6 @@ def retrieve_recent_entries(entries, current_datetime=None, start_datetime=None)
     if start_datetime is None:
         start_datetime = current_datetime - timedelta(days=1)
     return [entry for entry in entries if check_entry_recent(entry, current_datetime, start_datetime)]
+
+def get_all_retrievers():
+    return Retriever.__subclasses__()
