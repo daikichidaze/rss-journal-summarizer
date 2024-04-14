@@ -7,25 +7,23 @@ class SlackSender:
     def __init__(self, webhook_url):
         self.webhook_url = webhook_url
 
-    def send_summary(self, entry, summary, journal_title):
-        authors = '; '.join([author.name for author in entry.authors])
-
+    def send_summary(self, propertiy, summary):
         data = {
             'blocks': [
                 {
                     'type': 'section',
                     'text': {
                         'type': 'mrkdwn',
-                        'text': f'<{entry.link}|{entry.title}>',
+                        'text': f'<{propertiy["url"]}|{propertiy["title"]}>',
                     },
                 },
                 {
                     'type': 'section',
                     'text': {
                         'type': 'mrkdwn',
-                        'text': f'Journal: `{journal_title}`\n'
-                                f'Authors: `{authors}`\n'
-                                f'Date: `{entry.updated}`\n'
+                        'text': f'Journal: `{propertiy["journal_name"]}`\n'
+                                f'Authors: `{propertiy["authors"]}`\n'
+                                f'Date: `{propertiy["date"]}`\n'
                     },
                 },
                 {'type': 'divider'},

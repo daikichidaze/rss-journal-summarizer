@@ -56,6 +56,7 @@ class InternationalOrganizationRetriever(Retriever):
         title = entry['title']
         authors = ';'.join([item.name for item in entry['authors']])
         return {
+            'journal_name': self.name,
             'date': date,
             'url': url,
             'title': title,
@@ -77,13 +78,12 @@ class WorldPoliticsRetriever(Retriever):
         return abstract_text
 
     def get_entry_property(self, entry) -> dict:
-        journal = entry['prism_publicationtitle']
-        date = entry['prism_publicationdate']
+        date = entry['updated']
         url = entry['link']
         title = entry['title']
-        authors = ';'.join([item.name for item in entry['authors']])
+        authors = ''
         return {
-            'journal': journal,
+            'journal_name': self.name,
             'date': date,
             'url': url,
             'title': title,

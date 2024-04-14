@@ -28,6 +28,7 @@ if __name__ == "__main__":
 
     for entry in recent_entries:
         abstract: str = retriever.extract_abstract(entry)
+        entry_property: dict = retriever.get_entry_property(entry)
 
         if abstract == '':
             continue
@@ -39,7 +40,7 @@ if __name__ == "__main__":
 ## 解説
 この研究は、国際批判に直面するとき、国家が他国の同様の欠点を指摘するwhataboutismがアメリカの公衆意見をどのように形成するかを調査している。whataboutismは批判の影響を軽減し、公衆の立場を変える効果があり、類似の最近の過ちを引用するwhataboutismが意見を形成する力を持つことが分かった。しかし、whataboutist国家のアイデンティティは効果に大きな影響を与えない。これらの結果から、whataboutismは国際関係における強力な修辞戦術であり、国際関係の研究者により多くの注意を必要とすることが示されている。"""
 
-        status = sender.send_summary(entry, summary, retriever.name)
+        status = sender.send_summary(entry_property, summary)
         # status = 200
         if status == 200:
             had_updates = True
