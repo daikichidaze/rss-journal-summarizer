@@ -1,75 +1,40 @@
-### Integrated README for Python Project
+# Journal-summarizer from RSS
 
-#### Project Description
+## Description
 
-This project is designed to automatically retrieve, summarize, and send summaries of recent entries from international organizations to a designated Slack channel. It integrates with OpenAI's API to generate concise summaries and uses a Slack webhook to notify team members. The project consists of several Python scripts each handling specific parts of the process.
+This project contains a set of Python scripts designed to interact with various APIs and handle data processing tasks. It includes functionality for managing run dates, retrieving and parsing data from external sources, and a wrapper for OpenAI API interactions.
 
-#### Components
+## Modules
 
-1. **main.py**: The main script that orchestrates the workflow of retrieving entries, summarizing abstracts, and sending notifications.
-2. **retriever.py**: Manages the fetching of recent entries from an RSS feed and extracts abstracts.
-3. **openai_wrapper.py**: Interfaces with OpenAI's API to summarize the abstracts using a structured prompt.
-4. **sender.py**: Handles the sending of formatted messages to a Slack channel using a webhook.
+- `main.py`: Main script that initiates the process.
+- `sender.py`, `retriever.py`: Scripts responsible for sending and retrieving data.
+- `run_date_mgt.py`: Manages run dates to keep track of operations.
+- `openai_wrapper.py`: Simplifies interactions with the OpenAI API.
 
-#### Workflow
+## Installation
 
-- The script initializes in the Indochina Timezone (ICT).
-- Reads necessary credentials from environment variables.
-- Retrieves entries from the last 62 days and processes them for summarization.
-- Sends formatted summaries to a Slack channel, pausing briefly between posts to manage API usage.
-
-#### Environment Variables
-
-- `OPENAI_API_KEY`: Required for accessing OpenAI's API services.
-- `SLACK_URL`: The Slack webhook URL for sending notifications.
-
-#### Dependencies
-
-- Python libraries: `json`, `os`, `datetime`, `time`, `pytz`, `feedparser`, `requests`, `BeautifulSoup`
-- External libraries: `openai`, `requests`
-
-#### Installation
-
-Ensure all Python dependencies are installed. For external libraries, use:
+To install the required dependencies, run the following command:
 
 ```bash
-pip install feedparser requests beautifulsoup4 pytz openai
+pip install -r requirements.txt
 ```
 
-#### Usage
+## Dependencies
 
-Ensure environment variables are set up correctly. Run the project with:
+- `openai==1.17.0`: For interacting with OpenAI APIs.
+- `feedparser==6.0.11`: For parsing feeds.
+- `requests==2.31.0`: For making HTTP requests.
+- `beautifulsoup4==4.12.3`: For parsing HTML and XML documents.
+- `pytz==2021.1`: For timezone calculations.
+
+## Running the Project
+
+To run the project, execute the `main.py` script:
 
 ```bash
 python main.py
 ```
 
-Check the specified Slack channel for incoming summaries.
+## Last Run
 
-#### Detailed Usage and Configuration
-
-1. **Retrieving and Processing Entries**:
-
-   ```python
-   from retriever import InternationalOrganizationRetriever
-   retriever = InternationalOrganizationRetriever()
-   recent_entries = retriever.fetch_recent_entries(now, hours_ago=24)
-   ```
-
-2. **Summarizing Abstracts**:
-
-   ```python
-   from openai_wrapper import summarize_abstract
-   summary = summarize_abstract(abstract, api_key)
-   ```
-
-3. **Sending to Slack**:
-   ```python
-   from sender import SlackSender
-   sender = SlackSender(webhook_url)
-   sender.send_summary(entry, summary, journal_title)
-   ```
-
-#### Note
-
-This integrated approach reduces redundancy in module descriptions, focusing on how each part contributes to the overall functionality of the project, making it clear and concise for users to understand and implement.
+The last run date of the scripts is stored in `last_run_date.json`.
