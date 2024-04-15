@@ -39,7 +39,7 @@ class Retriever(ABC):
 
 
 class InternationalAffairsLatestIssueRetriever(Retriever):
-    name = 'International Affairs'
+    name = 'International Affairs / Latest issue'
     rss_url = 'https://academic.oup.com/rss/site_5569/3425.xml'
 
     def parse_abstract(self, soup) -> str:
@@ -65,7 +65,7 @@ class InternationalAffairsLatestIssueRetriever(Retriever):
 
 
 class InternationalAffairsAdvanceArticlesRetriever(Retriever):
-    name = 'International Affairs'
+    name = 'International Affairs / Advance articles'
     rss_url = 'https://academic.oup.com/rss/site_5569/advanceAccess_3425.xml'
 
     def parse_abstract(self, soup) -> str:
@@ -189,5 +189,4 @@ def retrieve_recent_entries(entries, current_datetime=None, start_datetime=None)
 
 
 def get_all_retrievers():
-    # return Retriever.__subclasses__()
-    return [InternationalSecurityRetriever]
+    return Retriever.__subclasses__()
