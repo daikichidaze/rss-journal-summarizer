@@ -1,8 +1,5 @@
 import os
-from datetime import datetime
 from time import sleep
-
-import pytz
 
 from run_date_mgt import get_current_datetime, read_last_run_date, update_last_run_date
 from retriever import get_all_retrievers
