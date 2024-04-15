@@ -23,9 +23,7 @@ class Retriever(ABC):
         headers = {
             'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36'
         }
-        response = requests.get(
-            'https://academic.oup.com/ia/advance-article/doi/10.1093/ia/iiae069/7641065', headers=headers)
-        # response = requests.get(entry.link, headers=headers)
+        response = requests.get(entry.link, headers=headers)
         response.raise_for_status()
         soup = BeautifulSoup(response.text, 'html.parser')
         return self.parse_abstract(soup)
@@ -108,7 +106,8 @@ class InternationalOrganizationRetriever(Retriever):
         date = entry['updated']
         url = entry['link']
         title = entry['title']
-        authors = ';'.join([item.name for item in entry['authors']])
+        authors = ';'.join(
+            [item.name for item in entry['authors']]) if 'authors' in entry else ''
         return {
             'journal_name': self.name,
             'date': date,
@@ -121,6 +120,33 @@ class InternationalOrganizationRetriever(Retriever):
 class WorldPoliticsRetriever(Retriever):
     name = 'World Politics'
     rss_url = 'https://muse.jhu.edu/feeds/latest_articles?jid=208'
+
+    def parse_abstract(self, soup) -> str:
+        abstract_class = soup.find(class_='abstract')
+        if abstract_class is None:  # In case not a article page
+            return ''
+        abstract_contents = abstract_class.find_all('p', recursive=False)[0]
+        abstract_paragraph = abstract_contents.contents[1]  # second <p>
+        abstract_text = abstract_paragraph.contents[0]  # first contents
+        return abstract_text
+
+    def get_entry_property(self, entry) -> dict:
+        date = entry['updated']
+        url = entry['link']
+        title = entry['title']
+        authors = ''
+        return {
+            'journal_name': self.name,
+            'date': date,
+            'url': url,
+            'title': title,
+            'authors': authors
+        }
+
+
+class InternationalSecurityRetriever(Retriever):
+    name = 'International Security'
+    rss_url = 'https://muse.jhu.edu/feeds/latest_articles?jid=84'
 
     def parse_abstract(self, soup) -> str:
         abstract_class = soup.find(class_='abstract')
@@ -161,5 +187,7 @@ def retrieve_recent_entries(entries, current_datetime=None, start_datetime=None)
         start_datetime = current_datetime - timedelta(days=1)
     return [entry for entry in entries if check_entry_recent(entry, current_datetime, start_datetime)]
 
+
 def get_all_retrievers():
-    return Retriever.__subclasses__()
+    # return Retriever.__subclasses__()
+    return [InternationalSecurityRetriever]
