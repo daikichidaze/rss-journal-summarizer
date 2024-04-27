@@ -69,11 +69,24 @@ class InternationalAffairsAdvanceArticlesRetriever(Retriever):
     rss_url = 'https://academic.oup.com/rss/site_5569/advanceAccess_3425.xml'
 
     def parse_abstract(self, soup) -> str:
-        abstract_class = soup.find(class_='chapter-para')
+        abstract_class = soup.find(class_='abstract')
         if abstract_class is None:  # In case not a article page
             return ''
-        abstract_contents = abstract_class.find_all('p', recursive=False)[0]
-        abstract_text = abstract_contents.contents[0]  # first contents
+
+        abstract_content = abstract_class.find(class_='chapter-para')
+
+        if abstract_content is None:
+            return ''
+
+        bullet_content = abstract_content.find_all('li')
+        # Case of Usual text abstract
+        if len(bullet_content) == 0:
+            abstract_text = abstract_content.contents[0]
+        # Case of bullet paragraph
+        else:
+            abstract_text = ' '.join(item.get_text(strip=True)
+                                     for item in bullet_content)
+
         return abstract_text
 
     def get_entry_property(self, entry) -> dict:
