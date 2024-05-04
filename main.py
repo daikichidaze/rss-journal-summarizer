@@ -11,6 +11,7 @@ def post_summary(retriever) -> bool:
     recent_entries = retriever.fetch_recent_entries(now, last_run_date)
 
     had_updates = False
+    entry_count = 0
 
     for entry in recent_entries:
         abstract: str = retriever.extract_abstract(entry)
@@ -25,7 +26,10 @@ def post_summary(retriever) -> bool:
         # status = 200
         if status == 200:
             had_updates = True
+            entry_count += 1
         sleep(5)
+
+    print(f'Posted {entry_count} entries from {retriever.name}')
     return had_updates
 
 
