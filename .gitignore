@@ -1,5 +1,6 @@
 .vscode/
 __pycache__/
 **.html
-APIKEY
+OPENAI_APIKEY
+SLACK_URL
 last_run_date.json

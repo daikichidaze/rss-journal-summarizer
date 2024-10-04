@@ -34,7 +34,7 @@ def post_summary(retriever) -> bool:
 
 
 if __name__ == "__main__":
-    model = 'gpt-3.5-turbo'
+    model = 'gpt-4o-mini'
     openai_api_key = os.environ['OPENAI_API_KEY']
     slack_webhook_url = os.environ['SLACK_URL']
     run_date_file = 'last_run_date.json'

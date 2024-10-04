@@ -26,7 +26,10 @@ class Retriever(ABC):
         response = requests.get(entry.link, headers=headers)
         response.raise_for_status()
         soup = BeautifulSoup(response.text, 'html.parser')
-        return self.parse_abstract(soup)
+        abstract = self.parse_abstract(soup)
+        if not isinstance(abstract, str): # To avoid returning objects
+            abstract = ''
+        return abstract
 
     @abstractmethod
     def parse_abstract(self, soup) -> str:
