@@ -23,13 +23,24 @@ class Retriever(ABC):
         headers = {
             'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36'
         }
-        response = requests.get(entry.link, headers=headers)
-        response.raise_for_status()
-        soup = BeautifulSoup(response.text, 'html.parser')
-        abstract = self.parse_abstract(soup)
-        if not isinstance(abstract, str): # To avoid returning objects
+        try:
+            response = requests.get(entry.link, headers=headers)
+            response.raise_for_status()
+            soup = BeautifulSoup(response.text, 'html.parser')
+            abstract = self.parse_abstract(soup)
+            if not isinstance(abstract, str):  # To avoid returning objects
+                abstract = ''
+        except requests.exceptions.HTTPError as e:
+            if e.response.status_code == 403:
+                print(f"403 Forbidden error for URL: {entry.link}")
+            else:
+                print(f"HTTP error {e.response.status_code} for URL: {entry.link}")
+            abstract = ''
+        except Exception as e:
+            print(f"An error occurred: {e}")
             abstract = ''
         return abstract
+
 
     @abstractmethod
     def parse_abstract(self, soup) -> str:
